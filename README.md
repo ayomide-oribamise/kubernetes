@@ -63,8 +63,3 @@ For each subfolder, follow these general steps:
    ```
 
 ## Notes
-
-- Customize the YAML files with your application-specific configurations.
-- The subfolder structure helps keep your Kubernetes configurations organized and easy to manage.
-- Ensure to follow best practices and security guidelines while configuring your applications.
-- Feel free to modify the README files in application subfolders to provide any additional information specific to each application.
