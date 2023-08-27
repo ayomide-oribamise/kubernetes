@@ -1,0 +1,78 @@
+# Define the API version for the Kubernetes resource.
+apiVersion: apps/v1
+# Specify the type of Kubernetes resource being created, in this case, a Deployment.
+kind: Deployment
+# Metadata includes information about the resource, like its name and labels.
+metadata:
+  # Name of the Deployment resource.
+  name: webapp-deployment
+  # Labels associated with the Deployment.
+  labels:
+    app: mongo
+# Spec section defines the desired state of the Deployment.
+spec:
+  # Number of desired replicas for the Deployment.
+  replicas: 1
+  # Selector to match the Pods controlled by this Deployment.
+  selector:
+    matchLabels:
+      app: webapp
+  # Template for the Pods created by this Deployment.
+  template:
+    metadata:
+      # Labels for the Pods.
+      labels:
+        app: webapp
+    # Spec for the Pods.
+    spec:
+      # Containers section defines the container(s) within the Pod.
+      containers:
+        - name: webapp
+          # Docker image to use for the container.
+          image: nanajanashia/k8s-demo-app:v1.0
+          # Ports to expose on the container.
+          ports:
+            - containerPort: 3000
+          # Environment variables for the container.
+          env:
+            - name: USER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-user
+            - name: USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-password
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: mongo-service
+                  key: mongo-url
+
+              
+---
+
+# Define the API version for the Kubernetes resource.
+apiVersion: v1
+# Specify the type of Kubernetes resource being created, in this case, a Service.
+kind: Service
+# Metadata includes information about the resource, like its name and labels.
+metadata:
+  # Name of the Service resource.
+  name: webapp-service
+# Spec section defines the desired state of the Service.
+spec:
+  # Type of the Service (NodePort in this case).
+  type: NodePort
+  # Selector to target the Pods for the Service.
+  selector:
+    app: webapp
+  # Ports to expose on the Service.
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+      # Node port for external access.
+      nodePort: 30000

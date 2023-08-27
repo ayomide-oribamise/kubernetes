@@ -1,0 +1,68 @@
+# Define the API version for the Kubernetes resource.
+apiVersion: apps/v1
+# Specify the type of Kubernetes resource being created, in this case, a Deployment.
+kind: Deployment
+# Metadata includes information about the resource, like its name and labels.
+metadata:
+  # Name of the Deployment resource.
+  name: mongo-deployment
+  # Labels associated with the Deployment.
+  labels:
+    app: mongo
+# Spec section defines the desired state of the Deployment.
+spec:
+  # Number of desired replicas for the Deployment.
+  replicas: 1
+  # Selector to match the Pods controlled by this Deployment.
+  selector:
+    matchLabels:
+      app: mongo
+  # Template for the Pods created by this Deployment.
+  template:
+    metadata:
+      # Labels for the Pods.
+      labels:
+        app: mongo
+    # Spec for the Pods.
+    spec:
+      # Containers section defines the container(s) within the Pod.
+      containers:
+        - name: mongo
+          # Docker image to use for the container.
+          image: mongo:5.0.20
+          # Ports to expose on the container.
+          ports:
+            - containerPort: 27017
+          # Environment variables for the container.
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-user
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: mongo-password
+
+---
+
+# Define the API version for the Kubernetes resource.
+apiVersion: v1
+# Specify the type of Kubernetes resource being created, in this case, a Service.
+kind: Service
+# Metadata includes information about the resource, like its name and labels.
+metadata:
+  # Name of the Service resource.
+  name: mongo-service
+# Spec section defines the desired state of the Service.
+spec:
+  # Selector to target the Pods for the Service.
+  selector:
+    app: mongo
+  # Ports to expose on the Service.
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017

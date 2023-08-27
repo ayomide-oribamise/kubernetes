@@ -1,0 +1,12 @@
+# Define the API version for the Kubernetes resource.
+apiVersion: v1
+# Specify the type of Kubernetes resource being created, in this case, a ConfigMap.
+kind: ConfigMap
+# Metadata includes information about the resource, like its name and labels.
+metadata:
+  # Name of the ConfigMap resource.
+  name: mongo-service
+# Data section contains key-value pairs that will be stored in the ConfigMap.
+data:
+  # Key-value pair representing the MongoDB connection URL.
+  mongo-url: mongo-service
